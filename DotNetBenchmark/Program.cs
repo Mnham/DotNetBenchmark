@@ -4,6 +4,10 @@ namespace DotNetBenchmark
 {
     public class Program
     {
-        public static void Main(string[] args) => BenchmarkRunner.Run<Iteration>();
+        public static void Main(string[] args)
+        {
+            BenchmarkRunner.Run<Iteration>();
+            BenchmarkRunner.Run<ToArrayToList>();
+        }
     }
 }
