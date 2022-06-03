@@ -28,10 +28,7 @@ namespace DotNetBenchmark
         [GlobalSetup]
         public void Setup()
         {
-            Random rnd = new();
-            _list = Enumerable.Repeat(0, 1000)
-                .Select(i => rnd.Next(-10, 10))
-                .ToList();
+            _list = Enumerable.Repeat(0, 10000).Select(i => i).ToList();
             _array = _list.ToArray();
         }
     }
