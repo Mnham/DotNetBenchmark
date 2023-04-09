@@ -1,16 +1,17 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
-using BenchmarkDotNet.Jobs;
 
 namespace DotNetBenchmark
 {
     [RPlotExporter, CsvMeasurementsExporter]
-    [SimpleJob(RuntimeMoniker.Net48), SimpleJob(RuntimeMoniker.Net60)]
-    public class Iteration
+    public class ForVsForEach
     {
         private int[] _array;
         private List<int> _list;
+
+        [Params(100_000_000)]
+        public int Capacity { get; set; }
 
         [Benchmark]
         public int ForArray()
@@ -63,13 +64,8 @@ namespace DotNetBenchmark
         [GlobalSetup]
         public void Setup()
         {
-            Random rnd = new();
-
-            _list = Enumerable.Repeat(0, 10000)
-                .Select(i => rnd.Next(-10, 10))
-                .ToList();
-
-            _array = _list.ToArray();
+            _array = Utils.GetValues(Capacity);
+            _list = _array.ToList();
         }
     }
 }

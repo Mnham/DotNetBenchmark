@@ -1,24 +1,36 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
-using BenchmarkDotNet.Jobs;
 
 namespace DotNetBenchmark
 {
     [MemoryDiagnoser]
     [RPlotExporter, CsvMeasurementsExporter]
-    [SimpleJob(RuntimeMoniker.Net48), SimpleJob(RuntimeMoniker.Net60)]
     public class MaterializeEnumerable
     {
-        private IEnumerable<int> _enumerable;
+        private int[] _values;
 
-        [Benchmark]
-        public int[] EnumerableToArray() => _enumerable.ToArray();
-
-        [Benchmark]
-        public List<int> EnumerableToList() => _enumerable.ToList();
+        [Params(10_000_000)]
+        public int Capacity { get; set; }
 
         [GlobalSetup]
-        public void Setup() => _enumerable = Enumerable.Repeat(0, 10000).Select(i => i);
+        public void Setup() => _values = Utils.GetValues(Capacity);
+
+        [Benchmark]
+        public int[] ToArray() => Generator().ToArray();
+
+        [Benchmark]
+        public List<int> ToList() => Generator().ToList();
+
+        private IEnumerable<int> Generator()
+        {
+            foreach (int value in _values)
+            {
+                if (value % 2 == 0)
+                {
+                    yield return value;
+                }
+            }
+        }
     }
 }
